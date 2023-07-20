@@ -1,18 +1,25 @@
-name: CI/CD Pipeline
+name: Lint Python Code
+
 on:
   push:
     branches:
       - main
 
 jobs:
-  build:
+  lint_python:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Build and test
-      run: |
-        # Replace this command with the appropriate build and test commands for your programming language.
-        python riyasewana.py
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.x  # Replace 'x' with the Python version you want to use
+
+      - name: Install Flake8
+        run: pip install flake8
+
+      - name: Run Flake8
+        run: flake8 .
