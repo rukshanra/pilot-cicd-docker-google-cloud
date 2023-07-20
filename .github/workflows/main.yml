@@ -26,4 +26,4 @@ jobs:
           # Replace this command with the appropriate build and test commands for your programming language.
           flake8 riyasewana.py
           docker build -t my_riyasewana_app .
-          docker run my_riyasewana_app
+          # docker run my_riyasewana_app
