@@ -23,3 +23,5 @@ jobs:
 
       - name: Run Flake8
         run: flake8 .
+        docker build -t my_riyasewana_app .
+        docker run my_riyasewana_app
