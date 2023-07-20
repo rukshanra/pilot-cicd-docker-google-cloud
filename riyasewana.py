@@ -1,7 +1,7 @@
 import re
 import requests
-import csv
 import time
+
 
 def scrape_riyasewana():
     csv_content = "Title,SubTitle,Location,PostedDate,Url,Price,Contact,YOM,Make,Model,Mileage,Gear,Fuel Type,Engine\n"
@@ -17,9 +17,7 @@ def scrape_riyasewana():
         time.sleep(2)
 
         response = session.get(base_url)
-        # print("Response:", response)
         content = response.text
-        # print("Content:", content)
 
         car_ads = extract_car_links_from_response(content)
         print(f"Car Ads: {car_ads}")
@@ -31,18 +29,7 @@ def scrape_riyasewana():
             time.sleep(2)
 
             response = session.get(car_ad)
-            # print("Ad Details Response:", response)
             content = response.text
-
-            # # Specify the file path
-            # file_path = "output.txt"
-
-            # # Write the content to a file
-            # with open(file_path, "w") as file:
-            #     file.write(content)
-
-            # Print a confirmation message
-            # print("Content has been written to the file:", file_path)
 
             price_pattern = r"Price:\sRs.\s([\d,.]+)"
             contact_pattern = r"Contact<\/p><\/td><td class=\"aleft tfiv\"><span class=\"moreph\">([\d\s]+)"
@@ -53,11 +40,10 @@ def scrape_riyasewana():
             gear_pattern = r"Gear<\/p><\/td><td class=\"aleft\">(.*?)<\/td>"
             fuel_type_pattern = r"Fuel Type<\/p><\/td><td class=\"aleft\">(.*?)<\/td>"
             engine_pattern = r"Engine \(cc\)<\/p><\/td><td class=\"aleft\">(.*?)<\/td>"
-            title_pattern= r"<title>(.*?)<\/title>"
+            title_pattern = r"<title>(.*?)<\/title>"
             sub_pattern = r'<div id="mbody".*?>\s*<div id="content".*?>\s*<h1.*?>(.*?)</h1>\s*<h2.*?>(.*?)</h2>'
             # Define the pattern to match the date and time
             postedDate_pattern = r"\d{4}-\d{2}-\d{2} \d{1,2}:\d{2} [ap]m"
-
 
             price_match = re.search(price_pattern, content)
             contact_match = re.search(contact_pattern, content)
@@ -68,12 +54,8 @@ def scrape_riyasewana():
             gear_match = re.search(gear_pattern, content)
             fuel_type_match = re.search(fuel_type_pattern, content)
             engine_match = re.search(engine_pattern, content)
-            title_match= re.search(title_pattern, content)
+            title_match = re.search(title_pattern, content)
             sub_match = re.search(sub_pattern, content, re.DOTALL)
-            
-
-
-            
 
             price = price_match.group(1) if price_match else "NA"
             contact = contact_match.group(1) if contact_match else "NA"
@@ -84,14 +66,14 @@ def scrape_riyasewana():
             gear = gear_match.group(1) if gear_match else "NA"
             fuel_type = fuel_type_match.group(1) if fuel_type_match else "NA"
             engine = engine_match.group(1) if engine_match else "NA"
-            title=title_match.group(1) if title_match else "NA"
-            subTitle=sub_match.group(2) if sub_match else "NA"
+            title = title_match.group(1) if title_match else "NA"
+            subTitle = sub_match.group(2) if sub_match else "NA"
             # Extract the location after the comma
             location = subTitle.split(",")[-1].strip() if subTitle != "NA" else "NA"
-            subTitle=sub_match.group(2).replace(",", "") if sub_match else "NA"
+            subTitle = sub_match.group(2).replace(",", "") if sub_match else "NA"
 
-            postedMatch=re.search(postedDate_pattern, subTitle)
-            postedDate= postedMatch.group(0) if postedMatch else "NA"
+            postedMatch = re.search(postedDate_pattern, subTitle)
+            postedDate = postedMatch.group(0) if postedMatch else "NA"
 
             print("Price:", price)
             print("Contact:", contact)
@@ -103,11 +85,11 @@ def scrape_riyasewana():
             print("Fuel Type:", fuel_type)
             print("Engine:", engine)
             print("Title:", title)
-            print("Sub Title:" ,subTitle)
+            print("Sub Title:", subTitle)
             print("Location:", location)
             print("Posted Date:", postedDate)
-            print("url:",car_ad)
-            
+            print("url:", car_ad)
+
             csv_content += f"{title},{subTitle},{location},{postedDate},{car_ad},{price},{contact},{yom},{make},{model},{mileage},{gear},{fuel_type},{engine}\n"
 
     print("CSV content:")
@@ -117,9 +99,11 @@ def scrape_riyasewana():
     with open("Riyasewana-test.csv", "w") as csv_file:
         csv_file.write(csv_content)
 
+
 def extract_car_links_from_response(content):
     regex = r"<li[^>]*>\s*<[^>]*>\s*<a[^>]*href=\"(.*?)\""
     matches = re.findall(regex, content)
     return matches
+
 
 scrape_riyasewana()
